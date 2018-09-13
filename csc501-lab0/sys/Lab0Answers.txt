@@ -1,0 +1,104 @@
+------------------------------------------------------------------------------
+OS-501(002), Fall 2018
+
+Author: Anupam Godse Email: angodse@ncsu.edu
+
+PA0 - Additional Questions
+------------------------------------------------------------------------------
+
+1.Assuming the XINU text begins at address 0x0, draw a rough diagram of 
+XINU's memory layout with addresses derived from your experimental 
+measurements. Include the information you uncovered from running your 
+version of printsegaddress() and printprocstks().
+
+			
+
+                              |                             |
+                  0x00ffeff9  |-----------------------------|
+                              |                             |
+stack base:       0x00ffeff8  |-----------------------------|
+                              |  (stack base - 0x00ffeff8)  |
+                              | (stack limit - 0x00ffdffc)  |
+                              |        Process Stack        |
+                              |                             |
+stack limit:      0x00ffdffc  |-----------------------------|
+                              |                             |
+                              |            Heap             |
+                              |                             |
+                  0x00026bb8  |-----------------------------|
+                              |                             |
+                              |  (0x0001e540 - 0x00026bb7)  |
+                              | uninitialized data segment  |
+uninitialized                 |                             |
+data seg start:   0x0001e540  |-----------------------------|
+                              |                             |
+                              |  (0x00019337 - 0x0001e53f)  |
+                              |   initialized data segment  |
+initialized                   |                             |
+data seg start:   0x00019337  |-----------------------------|
+                              |                             |
+                              |  (0x00000000 - 0x00019336)  |
+                              |         text segment        |
+                              |                             |
+text seg start:   0x00000000  |-----------------------------|
+
+                                    XINU's Memory Layout
+		      
+------------------------------------------------------------------------------
+
+
+2. What is the difference in stack top address before and after calling 
+printtos()? Draw a diagram to illustrate what are the contents of the items 
+pushed into the stack between these two time points.
+
+
+The difference in stack top address before calling printtos() and after 
+calling printtos() is 4bytes. The content pushed onto the stack between
+these two points is the return address of the printtos calling function 
+i.e. the next instruction address after printtos() in the calling function.
+
+    SP = Stack Pointer
+
+					
+					
+					
+                              |                             |
+   SP Before     0x00ffefc0   |-----------------------------|
+                              |                             |
+                              |        return address       |
+                              |          0x000146d5         |
+                              |                             |
+   SP After      0x00ffefbc   |-----------------------------|
+                              |                             |
+                              |                             |
+                              |-----------------------------|
+                              |          0x00ffefae         |
+                              |         (element  4)        |
+                 0x00ffef7c   |-----------------------------|
+                              |          0x00016564         |
+                              |         (element  3)        |
+                 0x00ffef78   |-----------------------------|
+                              |          0x00ffefac         |
+                              |         (element  2)        |
+                 0x00ffef74   |-----------------------------|
+                              |          0x000194e2         |
+                              |         (element  1)        |
+Current SP(esp)  0x00ffef70   |-----------------------------|
+
+
+------------------------------------------------------------------------------
+
+
+3. In a stack frame, local variables are stored below the top of the stack. 
+In task 3, does your result show all the local variables declared in your 
+printtos function? If not, can you explain that? (hint: try to disable the 
+compiler optimization by specifing -O0 in your Makefile)
+
+
+No, the result doesen't show all the local variables because of compiler
+optimization. Due to code optimization the variables which are effectively
+never used are not allocated memory in stack frame.
+
+
+
+------------------------------------------------------------------------------
