@@ -1,0 +1,58 @@
+1. What are the advantages and disadvantages of each of the two scheduling policies? Also, give the advantages and disadvantages of the round robin scheduling policy originally implemented in Xinu.
+
+-Advantages of exponential distribution scheduler:
+	1. Starvation problem is solved because everytime a process is scheduled based on random value generated
+		which prevents any one process from taking cpu time and by probability every process has chance to 
+		get scheduled.
+	2. The value of lambda can be changed according to required distribution.
+	3. Every process if scheduled gets equal time so that there is no paritality.
+	
+-Disadvantages of exponential distribution scheduler:
+	1. Although it solves the starvation problem by adding the degree of randomness, the scheduler does not
+		guarantee that the process will get cpu time.
+	2. Higher priority processes have less chance to get scheduled as the probability of higher value getting
+		generated is lower than probability of lower value getting generated in case of lambda chosen.
+	3. The behaviour of scheduler is not predictable.
+	
+-Advantages of Linux like scheduler:
+	1. Every runnable processes is guarnteed to get cpu time as scheduler is designed to run every process within 
+		an epoch.
+	2. Adding goodness in selecting next process policy ensures that processes with higher priority get higher CPU
+		time and once the process uses its quantum it other processes are scheduled. This also solves starvation problem.
+	3. The behaviour of schedular is predictable.
+	4. Unused quantum from previous epoch is also considered which incresess degree of fariness.
+	
+-Disadvantages of Linux like scheduler:
+	1. The algorithm is little complex and involves computing of goodness value for every process along with computation of 
+		quantum for every process which is not free which results in little exra overhead which reduces efficiency.
+	2. There is no preemption and so if the quantum value assigned is high at start of epoch other processes will have to 
+		stall for that amount of period. Also new processes only gets scheduled in new epoch. this may lead to decreased 
+		responsiveness to real time processes which are added later to ready queue and earlier epoch is running.
+
+-Advantages of default Round robin policy in XINU:
+	1. Higher priority processes are scheduled first which preserves the importance of priority.
+	2. Lower quantum value will ensure high response time to each process with higher priority.
+	3. Processes haveing same priority are treated equally.
+	4. Very easy to implement and thus has less overhead.
+	
+-Disadvantages of default Round robin policy in XINU:
+	1. Lower priotity processes will starve if higher priority processes keep on adding to the ready queue.
+	2. If the QUANTUM value is small there will be more context switches which will reduce CPU efficiency.
+
+	
+
+2.Describe the way each of the schedulers affects the NULL process.
+
+- Effect of default scheduling policy on NULL processs:
+	In default scheduling policy NULL process will not get scheduled unless it is the only process in the ready queue.
+	This is because NULL process has 0 priority.
+
+- Effect of Exponential distribution scheduler on NULL process:
+	As the lowest random value generated is 0 but the scheduler always picks the process with priority greater than 
+	random value generated, this will result in scheduling the NULL process only when there is no other process in 
+	the ready queue.
+	
+- Effect of Linux like scheduler on NULL process:
+	Goodness value of NULL process will always be 0 as NULL process has 0 priority so it will always be the last process
+	to get scheduled in the epoch and as the priority is zero its quantum will always be zero so it will effectively never
+	run but only attempt to get run.
